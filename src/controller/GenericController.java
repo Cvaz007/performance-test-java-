@@ -23,7 +23,7 @@ public class GenericController extends Utils {
     }
 
     public void get(CrudRepository model) {
-        int id = Integer.parseInt(JOptionPane.showInputDialog("\n¿which do you want to find?"));
+        int id = Integer.parseInt(JOptionPane.showInputDialog("\n¿which do you want to find?, type the id"));
         JOptionPane.showMessageDialog(null, model.find(id).toString());
     }
 
@@ -42,7 +42,7 @@ public class GenericController extends Utils {
     }
 
     public void delete(CrudRepository model) {
-        int id = Integer.parseInt(JOptionPane.showInputDialog("\n¿which do you want to delete?"));
+        int id = Integer.parseInt(JOptionPane.showInputDialog("\n¿which do you want to delete?, type the id"));
         model.delete(model.find(id));
     }
 
