@@ -6,6 +6,7 @@ import entity.Product;
 import entity.Purchase;
 import entity.Store;
 import repository.CrudRepository;
+import service.PurchaseService;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -21,8 +22,15 @@ public class PurchaseModel implements CrudRepository {
 
     @Override
     public Object save(Object object) {
-        objConnection = ConfigurationDB.openConnection();
+        PurchaseService purchaseService = new PurchaseService();
         Purchase purchase = (Purchase) object;
+        int currentStock = purchaseService.currentStock(purchase.getQuantity(), purchase.getProductId(), 0);
+        if (currentStock < 0) {
+            JOptionPane.showMessageDialog(null, "We are sorry, we don't have that many products in stock.");
+            return null;
+        }
+
+        objConnection = ConfigurationDB.openConnection();
         try {
             String sql = "INSERT INTO purchase (client_id, product_id, quantity) VALUES ( ?, ?, ?);";
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -43,31 +51,40 @@ public class PurchaseModel implements CrudRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        purchaseService.updateStock(currentStock, purchase.getProductId());
+        purchaseService.showPurchase(purchase);
         ConfigurationDB.closeConnection();
         return purchase;
     }
 
     @Override
     public void update(Object object) {
-        objConnection = ConfigurationDB.openConnection();
+        PurchaseService purchaseService = new PurchaseService();
         Purchase purchase = (Purchase) object;
-        try {
-            String sql = "UPDATE purchase SET client_id = ?, product_id = ?, quantity = ? WHERE id = ?;";
-            PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
-            statement.setInt(1, purchase.getClientId());
-            statement.setInt(2, purchase.getProductId());
-            statement.setInt(3, purchase.getQuantity());
-            statement.setInt(4, purchase.getId());
-            statement.execute();
+        int currentStock = purchaseService.currentStock(purchase.getQuantity(), purchase.getProductId(), purchase.getId());
+        if (currentStock >= 0) {
+            objConnection = ConfigurationDB.openConnection();
+            try {
+                String sql = "UPDATE purchase SET client_id = ?, product_id = ?, quantity = ? WHERE id = ?;";
+                PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
+                statement.setInt(1, purchase.getClientId());
+                statement.setInt(2, purchase.getProductId());
+                statement.setInt(3, purchase.getQuantity());
+                statement.setInt(4, purchase.getId());
 
-            if (statement.executeUpdate() != 0) {
-                JOptionPane.showMessageDialog(null, "Purchase updating completed successfully");
+                if (statement.executeUpdate() != 0) {
+                    JOptionPane.showMessageDialog(null, "Purchase updating completed successfully");
+                }
+            } catch (SQLException e) {
+                ConfigurationDB.closeConnection();
+                throw new RuntimeException(e);
             }
-        } catch (SQLException e) {
+
+            purchaseService.updateStock(currentStock, purchase.getProductId());
+            purchaseService.showPurchase(purchase);
             ConfigurationDB.closeConnection();
-            throw new RuntimeException(e);
-        }
-        ConfigurationDB.closeConnection();
+        } else JOptionPane.showMessageDialog(null, "We are sorry, we don't have that many products in stock.");
     }
 
     @Override
@@ -119,8 +136,8 @@ public class PurchaseModel implements CrudRepository {
             store.setId(resultSet.getInt("store.id"));
             store.setName(resultSet.getString("store.name"));
             store.setLocation(resultSet.getString("store.location"));
-            store.setStock(resultSet.getInt("store.stock"));
 
+            product.setStock(resultSet.getInt("product.stock"));
             purchase.setId(resultSet.getInt("purchase.id"));
             purchase.setClientId(resultSet.getInt("purchase.client_id"));
             purchase.setProductId(resultSet.getInt("purchase.product_id"));
@@ -166,8 +183,8 @@ public class PurchaseModel implements CrudRepository {
                     store.setId(resultSet.getInt("store.id"));
                     store.setName(resultSet.getString("store.name"));
                     store.setLocation(resultSet.getString("store.location"));
-                    store.setStock(resultSet.getInt("store.stock"));
 
+                    product.setStock(resultSet.getInt("product.stock"));
                     purchase.setId(resultSet.getInt("purchase.id"));
                     purchase.setClientId(resultSet.getInt("purchase.client_id"));
                     purchase.setProductId(resultSet.getInt("purchase.product_id"));
@@ -193,7 +210,7 @@ public class PurchaseModel implements CrudRepository {
         objConnection = ConfigurationDB.openConnection();
         List<Purchase> purchases = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id where product.id = "+id+";";
+            String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id where product.id = " + id + ";";
             try (PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
                  ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -215,8 +232,8 @@ public class PurchaseModel implements CrudRepository {
                     store.setId(resultSet.getInt("store.id"));
                     store.setName(resultSet.getString("store.name"));
                     store.setLocation(resultSet.getString("store.location"));
-                    store.setStock(resultSet.getInt("store.stock"));
 
+                    product.setStock(resultSet.getInt("product.stock"));
                     purchase.setId(resultSet.getInt("purchase.id"));
                     purchase.setClientId(resultSet.getInt("purchase.client_id"));
                     purchase.setProductId(resultSet.getInt("purchase.product_id"));

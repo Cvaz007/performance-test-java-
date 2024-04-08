@@ -63,7 +63,7 @@ public class Main {
                                 System.out.println("BYE!");
                                 break;
                             default:
-                                JOptionPane.showInputDialog("I'm sorry, this options is not valid with this entity");
+                                JOptionPane.showMessageDialog(null, "I'm sorry, this options is not valid with this entity");
                                 break;
                         }
                     } while (!optionCrud.equalsIgnoreCase("7. Exit"));
@@ -99,7 +99,7 @@ public class Main {
                                 System.out.println("BYE!");
                                 break;
                             default:
-                                JOptionPane.showInputDialog("I'm sorry, this options is not valid with this entity");
+                                JOptionPane.showMessageDialog(null, "I'm sorry, this options is not valid with this entity");
                                 break;
                         }
                     } while (!optionCrud.equalsIgnoreCase("7. Exit"));
@@ -126,7 +126,6 @@ public class Main {
                                 controller.update(purchaseModel, Purchase.class);
                                 break;
                             case "4. List":
-                                controller.getAll(productModel);
                                 controller.get(purchaseModel);
                                 break;
                             case "5. List all":
@@ -140,7 +139,7 @@ public class Main {
                                 System.out.println("BYE!");
                                 break;
                             default:
-                                JOptionPane.showInputDialog("I'm sorry, this options is not valid with this entity");
+                                JOptionPane.showMessageDialog(null, "I'm sorry, this options is not valid with this entity");
                                 break;
                         }
                     } while (!optionCrud.equalsIgnoreCase("7. Exit"));

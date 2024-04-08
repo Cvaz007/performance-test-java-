@@ -28,7 +28,7 @@ public class GenericController extends Utils {
     }
 
     public void getString(GetByStringRepository model){
-        String string = JOptionPane.showInputDialog("Type product name or store name");
+        String string = JOptionPane.showInputDialog("Type name or store name");
         JOptionPane.showMessageDialog(null, model.find(string).toString());
     }
 
@@ -48,7 +48,6 @@ public class GenericController extends Utils {
 
     public void save(CrudRepository model, Class<?> entity) {
         List<AttributeInfo> list = extractAttributesInfo(entity);
-
         model.save(createObjectDynamically(entity, list));
     }
 

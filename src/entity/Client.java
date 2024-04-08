@@ -55,6 +55,6 @@ public class Client {
                 ", name='" + name + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
-                '}';
+                '}'+"\n";
     }
 }

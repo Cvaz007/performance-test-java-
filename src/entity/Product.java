@@ -6,15 +6,9 @@ public class Product {
     private double price;
     private int storeId;
     private Store store;
+    private int stock;
 
     public Product() {
-    }
-
-    public Product(int id, String name, double price, int storeId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.storeId = storeId;
     }
 
     public Product(int id, String name, double price, int storeId, Store store) {
@@ -23,6 +17,15 @@ public class Product {
         this.price = price;
         this.storeId = storeId;
         this.store = store;
+    }
+
+    public Product(int id, String name, double price, int storeId, Store store, int stock) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.storeId = storeId;
+        this.store = store;
+        this.stock = stock;
     }
 
     public int getId() {
@@ -65,14 +68,23 @@ public class Product {
         this.store = store;
     }
 
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
     @Override
     public String toString() {
-        return "Product{" +
+        return "\nProduct{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", storeId=" + storeId +
                 ", store=" + store.toString() +
-                '}';
+                ", stock=" + stock +
+                '}'+"\n";
     }
 }

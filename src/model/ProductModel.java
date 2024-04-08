@@ -24,12 +24,13 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
         objConnection = ConfigurationDB.openConnection();
         Product product = (Product) object;
         try {
-            String sql = "INSERT INTO product ( name, price, store_id) VALUES ( ?, ?, ?);";
+            String sql = "INSERT INTO product ( name, price, stock, store_id) VALUES ( ?, ?, ?, ?);";
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
             statement.setString(1, product.getName());
             statement.setDouble(2, product.getPrice());
-            statement.setInt(3, product.getStoreId());
+            statement.setInt(3, product.getStock());
+            statement.setInt(4, product.getStoreId());
 
             statement.execute();
 
@@ -52,13 +53,13 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
         objConnection = ConfigurationDB.openConnection();
         Product product = (Product) object;
         try {
-            String sql = "UPDATE product SET name = ?, lastname = ?, email = ? WHERE id = ?;";
+            String sql = "UPDATE product SET name = ?, price = ?, stock = ?, store_id = ? WHERE id = ?;";
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
             statement.setString(1, product.getName());
             statement.setDouble(2, product.getPrice());
-            statement.setInt(3, product.getStoreId());
-            statement.setInt(4, product.getId());
-            statement.execute();
+            statement.setInt(3, product.getStock());
+            statement.setInt(4, product.getStoreId());
+            statement.setInt(5, product.getId());
 
             if (statement.executeUpdate() != 0) {
                 JOptionPane.showMessageDialog(null, "Product updating completed successfully");
@@ -93,12 +94,12 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
     @Override
     public Object find(Object object) {
         objConnection = ConfigurationDB.openConnection();
-        Product product = (Product) object;
+        Product product = new Product();
         try {
             String sql = "SELECT * FROM product INNER JOIN store ON store.id = product.store_id WHERE product.id = ?;";
 
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
-            statement.setInt(1, (int) object);
+            statement.setInt(1,(int) object);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
@@ -106,8 +107,8 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
             store.setId(resultSet.getInt("store.id"));
             store.setName(resultSet.getString("store.name"));
             store.setLocation(resultSet.getString("store.location"));
-            store.setStock(resultSet.getInt("store.stock"));
 
+            product.setStock(resultSet.getInt("product.stock"));
             product.setId(resultSet.getInt("product.id"));
             product.setStoreId(resultSet.getInt("product.store_id"));
             product.setPrice(resultSet.getDouble("product.price"));
@@ -137,8 +138,8 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
                     store.setId(resultSet.getInt("store.id"));
                     store.setName(resultSet.getString("store.name"));
                     store.setLocation(resultSet.getString("store.location"));
-                    store.setStock(resultSet.getInt("store.stock"));
 
+                    product.setStock(resultSet.getInt("product.stock"));
                     product.setId(resultSet.getInt("product.id"));
                     product.setStoreId(resultSet.getInt("product.store_id"));
                     product.setPrice(resultSet.getDouble("product.price"));
@@ -165,6 +166,7 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
 
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
             statement.setString(1, "%" + string + "%");
+            statement.setString(2, "%" + string + "%");
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
@@ -172,8 +174,8 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
             store.setId(resultSet.getInt("store.id"));
             store.setName(resultSet.getString("store.name"));
             store.setLocation(resultSet.getString("store.location"));
-            store.setStock(resultSet.getInt("store.stock"));
 
+            product.setStock(resultSet.getInt("product.stock"));
             product.setId(resultSet.getInt("product.id"));
             product.setStoreId(resultSet.getInt("product.store_id"));
             product.setPrice(resultSet.getDouble("product.price"));
@@ -186,5 +188,23 @@ public class ProductModel implements CrudRepository, GetByStringRepository {
         }
         ConfigurationDB.closeConnection();
         return product;
+    }
+
+    public void updateStock(int stock, int id) {
+        objConnection = ConfigurationDB.openConnection();
+        try {
+            String sql = "UPDATE product SET  stock = ? WHERE id = ?;";
+            PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
+            statement.setInt(1, stock);
+            statement.setInt(2, id);
+
+            if (statement.executeUpdate() != 0) {
+                System.out.println("Product update successful");
+            }
+        } catch (SQLException e) {
+            ConfigurationDB.closeConnection();
+            throw new RuntimeException(e);
+        }
+        ConfigurationDB.closeConnection();
     }
 }

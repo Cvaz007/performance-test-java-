@@ -56,7 +56,6 @@ public class ClientModel implements CrudRepository, GetByStringRepository {
             statement.setString(2, client.getLastname());
             statement.setString(3, client.getEmail());
             statement.setInt(4, client.getId());
-            statement.execute();
 
             if (statement.executeUpdate() != 0) {
                 JOptionPane.showMessageDialog(null, "Client updating completed successfully");
@@ -71,11 +70,11 @@ public class ClientModel implements CrudRepository, GetByStringRepository {
     @Override
     public void delete(Object object) {
         objConnection = ConfigurationDB.openConnection();
-        Client airplane = (Client) object;
+        Client client = (Client) object;
         try {
             String sql = "DELETE FROM client WHERE id =?";
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
-            statement.setInt(1, airplane.getId());
+            statement.setInt(1, client.getId());
             statement.execute();
 
             if (statement.executeUpdate() != 0) {

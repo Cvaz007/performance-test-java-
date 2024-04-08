@@ -90,7 +90,7 @@ public class Purchase {
 
     @Override
     public String toString() {
-        return "Purchase{" +
+        return "\nPurchase{" +
                 "id=" + id +
                 ", clientId=" + clientId +
                 ", productId=" + productId +
@@ -98,6 +98,6 @@ public class Purchase {
                 ", purchaseDate=" + purchaseDate +
                 ", product=" + product.toString() +
                 ", client=" + client.toString() +
-                '}';
+                '}'+"\n";
     }
 }
