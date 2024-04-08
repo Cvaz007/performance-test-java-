@@ -3,6 +3,7 @@ package model;
 import connection.ConfigurationDB;
 import entity.Client;
 import repository.CrudRepository;
+import repository.GetByStringRepository;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ClientModel implements CrudRepository {
+public class ClientModel implements CrudRepository, GetByStringRepository {
     Connection objConnection;
 
     @Override
@@ -136,5 +137,30 @@ public class ClientModel implements CrudRepository {
         }
         ConfigurationDB.closeConnection();
         return Collections.singletonList(clients);
+    }
+
+    @Override
+    public Object find(String string) {
+        objConnection = ConfigurationDB.openConnection();
+        Client client = new Client();
+        try {
+            String sql = "SELECT * FROM client WHERE name like ?;";
+
+            PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
+            statement.setString(1, "%" + string + "%");
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+
+            client.setId(resultSet.getInt("id"));
+            client.setName(resultSet.getString("name"));
+            client.setLastname(resultSet.getString("lastname"));
+            client.setEmail(resultSet.getString("email"));
+
+        } catch (Exception e) {
+            ConfigurationDB.closeConnection();
+            throw new RuntimeException(e);
+        }
+        ConfigurationDB.closeConnection();
+        return client;
     }
 }

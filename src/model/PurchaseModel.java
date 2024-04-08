@@ -95,7 +95,7 @@ public class PurchaseModel implements CrudRepository {
         objConnection = ConfigurationDB.openConnection();
         Purchase purchase = new Purchase();
         try {
-            String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id WHERE id = ?;";
+            String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id WHERE purchase.id = ?;";
 
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
             statement.setInt(1, (int) object);
@@ -145,6 +145,55 @@ public class PurchaseModel implements CrudRepository {
         List<Purchase> purchases = new ArrayList<>();
         try {
             String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id;";
+            try (PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
+                 ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Client client = new Client();
+                    Product product = new Product();
+                    Purchase purchase = new Purchase();
+                    Store store = new Store();
+
+                    client.setId(resultSet.getInt("client.id"));
+                    client.setName(resultSet.getString("client.name"));
+                    client.setLastname(resultSet.getString("client.lastname"));
+                    client.setEmail(resultSet.getString("client.email"));
+
+                    product.setId(resultSet.getInt("product.id"));
+                    product.setStoreId(resultSet.getInt("product.store_id"));
+                    product.setPrice(resultSet.getDouble("product.price"));
+                    product.setName(resultSet.getString("product.name"));
+
+                    store.setId(resultSet.getInt("store.id"));
+                    store.setName(resultSet.getString("store.name"));
+                    store.setLocation(resultSet.getString("store.location"));
+                    store.setStock(resultSet.getInt("store.stock"));
+
+                    purchase.setId(resultSet.getInt("purchase.id"));
+                    purchase.setClientId(resultSet.getInt("purchase.client_id"));
+                    purchase.setProductId(resultSet.getInt("purchase.product_id"));
+                    purchase.setQuantity(resultSet.getInt("purchase.quantity"));
+                    purchase.setPurchaseDate(resultSet.getDate("purchase.purchase_date"));
+
+                    product.setStore(store);
+                    purchase.setClient(client);
+                    purchase.setProduct(product);
+
+                    purchases.add(purchase);
+                }
+            }
+        } catch (SQLException e) {
+            ConfigurationDB.closeConnection();
+            throw new RuntimeException("Error: " + e.getMessage(), e);
+        }
+        ConfigurationDB.closeConnection();
+        return Collections.singletonList(purchases);
+    }
+
+    public List<Object> findAllBySomething(int id) {
+        objConnection = ConfigurationDB.openConnection();
+        List<Purchase> purchases = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM purchase INNER JOIN client ON purchase.client_id = client.id INNER JOIN product ON product.id = purchase.product_id INNER JOIN store ON store.id = product.store_id where product.id = "+id+";";
             try (PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
                  ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

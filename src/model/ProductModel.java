@@ -5,6 +5,7 @@ import entity.Client;
 import entity.Product;
 import entity.Store;
 import repository.CrudRepository;
+import repository.GetByStringRepository;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ProductModel implements CrudRepository {
+public class ProductModel implements CrudRepository, GetByStringRepository {
     Connection objConnection;
 
     @Override
@@ -94,7 +95,7 @@ public class ProductModel implements CrudRepository {
         objConnection = ConfigurationDB.openConnection();
         Product product = (Product) object;
         try {
-            String sql = "SELECT * FROM product INNER JOIN store ON store.id = product.store_id WHERE id = ?;";
+            String sql = "SELECT * FROM product INNER JOIN store ON store.id = product.store_id WHERE product.id = ?;";
 
             PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
             statement.setInt(1, (int) object);
@@ -153,5 +154,37 @@ public class ProductModel implements CrudRepository {
         }
         ConfigurationDB.closeConnection();
         return Collections.singletonList(products);
+    }
+
+    @Override
+    public Object find(String string) {
+        objConnection = ConfigurationDB.openConnection();
+        Product product = new Product();
+        try {
+            String sql = "SELECT * FROM product INNER JOIN store ON store.id = product.store_id WHERE product.name like ? OR store.name like ?;";
+
+            PreparedStatement statement = (PreparedStatement) objConnection.prepareStatement(sql);
+            statement.setString(1, "%" + string + "%");
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+
+            Store store = new Store();
+            store.setId(resultSet.getInt("store.id"));
+            store.setName(resultSet.getString("store.name"));
+            store.setLocation(resultSet.getString("store.location"));
+            store.setStock(resultSet.getInt("store.stock"));
+
+            product.setId(resultSet.getInt("product.id"));
+            product.setStoreId(resultSet.getInt("product.store_id"));
+            product.setPrice(resultSet.getDouble("product.price"));
+            product.setName(resultSet.getString("product.name"));
+            product.setStore(store);
+
+        } catch (Exception e) {
+            ConfigurationDB.closeConnection();
+            throw new RuntimeException(e);
+        }
+        ConfigurationDB.closeConnection();
+        return product;
     }
 }

@@ -16,7 +16,7 @@ public class Main {
         ClientModel clientModel = new ClientModel();
         ProductModel productModel = new ProductModel();
         PurchaseModel purchaseModel = new PurchaseModel();
-        
+
         String optionEntity, optionCrud;
         String[] optionsEntity = {"1.CRUD CLIENT", "2.CRUD PRODUCT", "3.CRUD PURCHASE", "4. EXIT"};
         String[] optionsCrud = {"1. Create", "2. Delete", "3. Update", "4. List", "5. List all", "6. List by something", "7. Exit"};
@@ -54,7 +54,7 @@ public class Main {
                                 controller.update(clientModel, Client.class);
                                 break;
                             case "4. List":
-                                controller.get(clientModel);
+                                controller.getString(clientModel);
                                 break;
                             case "5. List all":
                                 controller.getAll(clientModel);
@@ -90,7 +90,7 @@ public class Main {
                                 controller.update(productModel, Product.class);
                                 break;
                             case "4. List":
-                                controller.get(productModel);
+                                controller.getString(productModel);
                                 break;
                             case "5. List all":
                                 controller.getAll(productModel);
@@ -126,10 +126,15 @@ public class Main {
                                 controller.update(purchaseModel, Purchase.class);
                                 break;
                             case "4. List":
+                                controller.getAll(productModel);
                                 controller.get(purchaseModel);
                                 break;
                             case "5. List all":
                                 controller.getAll(purchaseModel);
+                                break;
+                            case "6. List by something":
+                                controller.getAll(productModel);
+                                controller.getAllByProduct(purchaseModel);
                                 break;
                             case "7. Exit":
                                 System.out.println("BYE!");
