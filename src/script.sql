@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: bswxnhlsppskpmbi2yly-mysql.services.clever-cloud.com:3306
--- Generation Time: Apr 08, 2024 at 01:15 PM
+-- Generation Time: Apr 08, 2024 at 05:36 PM
 -- Server version: 8.0.22-13
 -- PHP Version: 8.2.16
 
@@ -39,9 +39,10 @@ CREATE TABLE `client` (
 --
 
 INSERT INTO `client` (`id`, `name`, `lastname`, `email`) VALUES
-(2, 'Juanito', 'Alimaña', 'alimaña@gmail.com'),
-(3, 'Sebastian', 'Moreno', 'sebas@gmail.com'),
-(4, 'carlos', 'cardona', 'cc@gmail.com');
+(3, 'Sebastian', 'Moreno E', 'SebastianMore@gmai.com'),
+(5, 'kevin', 'mejia', 'kwmejia@gmail.com'),
+(6, 'Camilo', 'Londoño', 'sl@gmail.com'),
+(7, 'Ken', 'Mosquera', 'moquera@hotmail.com');
 
 -- --------------------------------------------------------
 
@@ -53,17 +54,19 @@ CREATE TABLE `product` (
   `id` int NOT NULL,
   `name` varchar(50) NOT NULL,
   `price` double NOT NULL,
-  `store_id` int NOT NULL
+  `store_id` int NOT NULL,
+  `stock` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `price`, `store_id`) VALUES
-(1, 'leche', 3500, 1),
-(2, 'Huevos', 600, 2),
-(3, 'Arepas', 1300, 3);
+INSERT INTO `product` (`id`, `name`, `price`, `store_id`, `stock`) VALUES
+(2, 'huevo', 700, 2, 230),
+(3, 'Arepas', 1300, 3, 348),
+(4, 'Avena', 1200, 3, 194),
+(5, 'Quesito', 3700, 3, 85);
 
 -- --------------------------------------------------------
 
@@ -84,9 +87,14 @@ CREATE TABLE `purchase` (
 --
 
 INSERT INTO `purchase` (`id`, `client_id`, `product_id`, `purchase_date`, `quantity`) VALUES
-(5, 2, 2, '2024-04-08 12:57:48', 30),
-(6, 3, 3, '2024-04-08 12:57:48', 2),
-(7, 2, 2, '2024-04-08 13:11:48', 10);
+(8, 5, 3, '2024-04-08 15:37:52', 5),
+(9, 3, 3, '2024-04-08 15:40:16', 2),
+(10, 5, 2, '2024-04-08 15:42:56', 100),
+(11, 5, 2, '2024-04-08 15:50:08', 41),
+(12, 3, 2, '2024-04-08 15:55:19', 50),
+(13, 6, 5, '2024-04-08 16:00:34', 10),
+(14, 3, 2, '2024-04-08 16:18:42', 10),
+(21, 7, 5, '2024-04-08 17:29:13', 5);
 
 -- --------------------------------------------------------
 
@@ -97,18 +105,17 @@ INSERT INTO `purchase` (`id`, `client_id`, `product_id`, `purchase_date`, `quant
 CREATE TABLE `store` (
   `id` int NOT NULL,
   `name` varchar(50) NOT NULL,
-  `location` varchar(50) NOT NULL,
-  `stock` int NOT NULL
+  `location` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `store`
 --
 
-INSERT INTO `store` (`id`, `name`, `location`, `stock`) VALUES
-(1, 'D1', 'Belen', 100),
-(2, 'Ara', 'Pedregal', 1000),
-(3, 'Muuu', 'Florencia', 541);
+INSERT INTO `store` (`id`, `name`, `location`) VALUES
+(1, 'D1', 'Belen'),
+(2, 'Ara', 'Pedregal'),
+(3, 'Muuu', 'Florencia');
 
 --
 -- Indexes for dumped tables
@@ -149,19 +156,19 @@ ALTER TABLE `store`
 -- AUTO_INCREMENT for table `client`
 --
 ALTER TABLE `client`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `purchase`
 --
 ALTER TABLE `purchase`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `store`
