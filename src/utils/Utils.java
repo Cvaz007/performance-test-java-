@@ -62,6 +62,7 @@ public abstract class Utils {
                 double doubleValue = Double.parseDouble(JOptionPane.showInputDialog("Type " + attributeInfo.getAttributeName()));
                 attributeInfo.setValue(doubleValue);
             }
+            /* EN ESTE CASO NO NECESITO DATOS TIPO FECHA
             if (attributeInfo.getAttributeType().equalsIgnoreCase("date")) {
                 String dateString = JOptionPane.showInputDialog("Type " + attributeInfo.getAttributeName() +"  dd-MM-yyyy");
                 SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -81,7 +82,7 @@ public abstract class Utils {
                 } catch (DateTimeParseException e) {
                     JOptionPane.showMessageDialog(null, "Format error");
                 }
-            }
+            }*/
         }
 
         try {
